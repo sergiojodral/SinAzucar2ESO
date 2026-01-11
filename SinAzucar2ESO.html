@@ -1,0 +1,981 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>7 días sin ultraprocesados · Diario de azúcar (2º ESO)</title>
+  <style>
+    :root{
+      --bg:#0b1020; --text:#eef2ff; --muted:#b9c2ff;
+      --card:rgba(255,255,255,.07); --line:rgba(255,255,255,.14);
+      --accent:#7aa2ff; --ok:#39d98a; --warn:#ffce5c; --bad:#ff6b7a;
+      --radius:14px; --shadow:0 10px 24px rgba(0,0,0,.33);
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(900px 500px at 10% 10%, rgba(122,162,255,.20), transparent 60%),
+        radial-gradient(900px 500px at 90% 20%, rgba(57,217,138,.14), transparent 60%),
+        radial-gradient(800px 460px at 50% 100%, rgba(255,206,92,.10), transparent 60%),
+        var(--bg);
+      line-height:1.35;
+    }
+    .wrap{max-width:1180px; margin:0 auto; padding:14px 12px 22px}
+
+    header{
+      display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+      padding:12px; border:1px solid var(--line); background:var(--card);
+      border-radius:var(--radius); box-shadow:var(--shadow);
+    }
+    .brand{display:flex; gap:10px; align-items:flex-start}
+    .logo{
+      width:40px; height:40px; border-radius:12px;
+      background:linear-gradient(135deg, rgba(122,162,255,.9), rgba(57,217,138,.85));
+      box-shadow:0 10px 18px rgba(0,0,0,.22);
+      flex:0 0 auto;
+      display:flex; align-items:center; justify-content:center;
+      font-size:20px;
+    }
+    h1{margin:0; font-size:16px; letter-spacing:.2px}
+    .sub{margin:3px 0 0; color:var(--muted); font-size:12px; max-width:70ch}
+
+    .actions{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; align-items:center}
+    button{
+      cursor:pointer;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:12px;
+      font-size:12px;
+    }
+    button:hover{border-color:rgba(122,162,255,.55)}
+    button.primary{border-color:rgba(122,162,255,.45); background:rgba(122,162,255,.18)}
+    button.danger{border-color:rgba(255,107,122,.45); background:rgba(255,107,122,.14)}
+    button.small{padding:6px 9px; font-size:11.5px}
+
+    .grid{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){
+      header{flex-direction:column; align-items:stretch}
+      .actions{justify-content:flex-start}
+      .grid{grid-template-columns:1fr}
+    }
+
+    section.card{
+      border:1px solid var(--line);
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:12px;
+    }
+    .card h2{margin:0 0 8px; font-size:14px; letter-spacing:.2px}
+    .card h3{
+      margin:12px 0 6px;
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.8px;
+    }
+    .mini{font-size:12px; color:var(--muted)}
+    .tiny{font-size:11px; color:var(--muted)}
+    .mono{font-family:var(--mono)}
+
+    .form{
+      display:grid; gap:8px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
+      padding:10px;
+    }
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:8px;}
+    @media (max-width: 640px){ .row{grid-template-columns:1fr} }
+    label{font-size:12px; color:var(--muted)}
+    input, select, textarea{
+      width:100%;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      padding:9px 10px;
+      font-family:var(--sans);
+      font-size:13px;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{border-color:rgba(122,162,255,.6)}
+    textarea{min-height:96px; resize:vertical}
+
+    .tabs{
+      display:flex; gap:6px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.14);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      border-color:rgba(122,162,255,.6);
+      background:rgba(122,162,255,.14);
+      color:var(--text);
+    }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+    th, td{
+      padding:8px 9px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+      font-size:12.5px;
+    }
+    th{
+      text-align:left;
+      color:var(--muted);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.7px;
+      background:rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+    tr:last-child td{border-bottom:none}
+    td.num{width:130px}
+    td.unit{width:90px}
+    td.actionsCol{width:80px; text-align:right}
+    .ghost{
+      border:1px dashed rgba(238,242,255,.26);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+
+    .summary{
+      display:grid; gap:8px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
+      padding:10px;
+      margin-top:10px;
+    }
+    .pillRow{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.14);
+      font-size:12px; color:var(--muted);
+    }
+    .pill strong{color:var(--text); font-weight:700}
+    .dot{width:8px; height:8px; border-radius:99px; background:var(--accent)}
+    .dot.g{background:var(--ok)}
+    .dot.w{background:var(--warn)}
+    .dot.r{background:var(--bad)}
+    .tag{
+      font-size:11px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      padding:4px 8px;
+      border-radius:999px;
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .tag.good{border-color:rgba(57,217,138,.45); background:rgba(57,217,138,.12); color:#d8ffe9;}
+    .tag.warn{border-color:rgba(255,206,92,.45); background:rgba(255,206,92,.12); color:#fff3d6;}
+    .tag.bad{border-color:rgba(255,107,122,.55); background:rgba(255,107,122,.12); color:#ffe1e6;}
+
+    .chart{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      border-radius:12px;
+      padding:10px;
+      margin-top:10px;
+    }
+    .chart.big{ padding:12px; background:rgba(255,255,255,.05); }
+    canvas{width:100%; height:auto; display:block;}
+
+    .help{
+      border:1px dashed rgba(122,162,255,.55);
+      background:rgba(122,162,255,.09);
+      border-radius:12px;
+      padding:9px 10px;
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .help strong{color:var(--text)}
+
+    footer{
+      margin-top:12px;
+      padding:12px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      border-radius:var(--radius);
+      color:var(--muted);
+      font-size:11.5px;
+    }
+
+    @media print{
+      body{background:#fff; color:#000}
+      header, section.card, footer{box-shadow:none; background:#fff; border-color:#ddd}
+      table{border-color:#ddd}
+      th, td{border-color:#ddd}
+      .actions{display:none}
+      .tab, .pill, .tag, .help{border-color:#ddd}
+      input, select, textarea{background:#fff; color:#000}
+      .wrap{padding:10px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">🥤</div>
+        <div>
+          <h1>Diario de 7 días: ultraprocesados y azúcar (2º ESO)</h1>
+          <p class="sub">
+            Registra ultraprocesados, calcula el azúcar consumida y compárala con un <strong>límite fijo</strong>.
+            En bebidas mira “azúcares (g) por <strong>100 ml</strong>”. En sólidos, por <strong>100 g</strong>.
+          </p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary" type="button" onclick="window.print()">Guardar / Imprimir (PDF)</button>
+        <button type="button" onclick="exportCSV()">Exportar CSV</button>
+        <button type="button" onclick="clearWeek()">Borrar semana</button>
+        <button class="danger" type="button" onclick="resetAll()">Reset total</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- IZQUIERDA -->
+      <section class="card">
+        <h2>1) Perfil y límite saludable</h2>
+
+        <div class="form">
+          <div class="row">
+            <div>
+              <label for="student">Nombre</label>
+              <input id="student" placeholder="Nombre y apellidos" />
+            </div>
+            <div>
+              <label for="group">Grupo</label>
+              <select id="group">
+                <option value="">Selecciona…</option>
+                <option>2º ESO A</option>
+                <option>2º ESO B</option>
+                <option>2º ESO C</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="start">Fecha inicio (día 1)</label>
+              <input id="start" type="date" />
+            </div>
+            <div>
+              <!-- ✅ CAMBIO: eliminado el campo "Límite diario (fijo)" y se muestra el texto directamente -->
+              <label>Límite diario</label>
+              <div class="help" style="margin:0">
+                El límite diario es <strong>25 g. de azúcar al día</strong>.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="help">
+          <strong>Cómo calcular:</strong>
+          <span class="mono">Azúcar ingerida (g) = cantidad × (azúcar/100)</span>.
+          <br>
+          <strong>Ejemplo bebida:</strong> 330 ml con 10,6 g/100 ml ⇒ 330×10,6/100 = 35,0 g.
+        </div>
+
+        <h3>2) Registro de ultraprocesados (7 días)</h3>
+        <p class="tiny">
+          Primera columna: tipo típico. Segunda: producto concreto. Luego cantidad y unidad (g/ml/cl/l).
+        </p>
+
+        <div class="tabs" id="dayTabs"></div>
+
+        <table aria-label="Tabla de registro">
+          <thead>
+            <tr>
+              <th style="width:22%">Tipo de ultraprocesado</th>
+              <th style="width:22%">Producto concreto</th>
+              <th class="num">Cantidad</th>
+              <th class="unit">Unidad</th>
+              <th class="num">Azúcar (g/100g o g/100ml)</th>
+              <th class="num">Azúcar ingerida (g)</th>
+              <th class="actionsCol">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="logBody"></tbody>
+        </table>
+
+        <div class="summary" id="daySummary">
+          <div class="pillRow">
+            <span class="pill"><span class="dot"></span> Día: <strong id="dayLabel">1</strong></span>
+            <span class="pill"><span class="dot"></span> Azúcar hoy: <strong id="daySugar">0.0 g</strong></span>
+            <span class="pill"><span class="dot"></span> Ultraprocesado hoy: <strong id="dayUp">0</strong></span>
+            <span class="pill"><span class="dot"></span> Límite: <strong id="limitLabel">25 g</strong></span>
+            <span class="tag" id="dayTag">—</span>
+          </div>
+          <div class="tiny" id="dayHint">Rellena varios productos si hace falta: desayuno, recreo, tarde…</div>
+        </div>
+
+        <div class="chart">
+          <h3 style="margin-top:0">3) Gráfica: azúcar por día vs límite</h3>
+          <canvas id="chartDaily" width="920" height="420" aria-label="Gráfico diario"></canvas>
+          <div class="tiny">La línea discontinua marca el <strong>límite: 25 g</strong>.</div>
+        </div>
+      </section>
+
+      <!-- DERECHA -->
+      <section class="card">
+        <h2>4) Resumen semanal y reflexión</h2>
+
+        <div class="summary">
+          <div class="pillRow">
+            <span class="pill"><span class="dot"></span> Total semanal azúcar: <strong id="weekSugar">0.0 g</strong></span>
+            <span class="pill"><span class="dot"></span> Media diaria azúcar: <strong id="avgSugar">0.0 g</strong></span>
+          </div>
+          <div class="pillRow">
+            <span class="pill"><span class="dot g"></span> Días en verde: <strong id="greenDays">0</strong></span>
+            <span class="pill"><span class="dot w"></span> Días en ámbar: <strong id="amberDays">0</strong></span>
+            <span class="pill"><span class="dot r"></span> Días en rojo: <strong id="redDays">0</strong></span>
+          </div>
+          <div class="help">
+            <strong>Lectura rápida:</strong>
+            Verde = cumples el límite. Ámbar = lo superas poco (hasta +25%). Rojo = lo superas mucho.
+          </div>
+        </div>
+
+        <div class="chart big">
+          <h3 style="margin-top:0">5) “Lo saludable” vs “lo que hago”</h3>
+          <div class="mini" id="compareMsg" style="margin-bottom:8px; color:var(--text); opacity:.92"></div>
+          <canvas id="chartCompare" width="920" height="380" aria-label="Comparación saludable vs real"></canvas>
+          <div class="tiny">Comparo tu <strong>media diaria</strong> con el <strong>límite</strong>.</div>
+        </div>
+
+        <h3>6) Mi reflexión</h3>
+        <p class="mini">
+          Incluye al menos <strong>2 números</strong> (por ejemplo: “media diaria”, “un día concreto”, “% por encima del límite”).
+        </p>
+        <div class="form">
+          <label for="reflection">Mi reflexión</label>
+          <textarea id="reflection" placeholder="¿Qué te sorprende? ¿Qué productos aportan más azúcar? ¿Qué cambiarías?"></textarea>
+
+          <label for="plan">Mi plan de mejora (7 días siguientes)</label>
+          <textarea id="plan" placeholder="Ej.: cambiar refrescos por agua, reducir bollería, mirar etiquetas antes de comprar…"></textarea>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <strong>Diario de 7 días (2º ESO)</strong> · Nutrición y hábitos saludables · Calculadora de azúcar en ultraprocesados.<br>
+      <span class="mini">Material didáctico creado por Sergio Jodral, profesor de Matemáticas y Juan Luis Sáez, profesor de Educación Física usando IA. I.E.S. Marqués de Comares. Lucena (Córdoba)</span>
+    </footer>
+  </div>
+
+  <script>
+    const KEY = 'MM_UP_SUGAR_V3';
+    const LIMIT_G = 25;
+
+    const ULTRA_TYPES = [
+      { id:'refresco', label:'Refresco / bebida azucarada', unit:'ml' },
+      { id:'zumo', label:'Zumo / néctar envasado', unit:'ml' },
+      { id:'bebidaEner', label:'Bebida energética', unit:'ml' },
+      { id:'batido', label:'Batido / lácteo azucarado', unit:'ml' },
+      { id:'bolleria', label:'Bollería industrial', unit:'g' },
+      { id:'galletas', label:'Galletas', unit:'g' },
+      { id:'cereales', label:'Cereales azucarados', unit:'g' },
+      { id:'choco', label:'Chocolate / barrita', unit:'g' },
+      { id:'chuches', label:'Chucherías', unit:'g' },
+      { id:'snacks', label:'Snacks (patatas, gusanitos...)', unit:'g' },
+      { id:'helado', label:'Helado', unit:'g' },
+      { id:'salsa', label:'Salsas (ketchup, etc.)', unit:'g' },
+      { id:'fastfood', label:'Comida rápida (ultraprocesada)', unit:'g' },
+      { id:'otro', label:'Otro', unit:'g' },
+    ];
+
+    function n(v){
+      const s = String(v ?? '').trim().replace(',', '.');
+      if(s==='') return NaN;
+      const x = Number(s);
+      return Number.isFinite(x) ? x : NaN;
+    }
+    function round1(x){ return Math.round(x*10)/10; }
+    function dayName(i){ return `Día ${i+1}`; }
+    function escapeHtml(s){
+      return String(s ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
+    }
+
+    function emptyItem(){
+      return { typeId:'refresco', detail:'', amount:'', unit:'ml', sugar100:'' };
+    }
+
+    const state = {
+      activeDay: 0,
+      profile: { student:'', group:'', start:'', reflection:'', plan:'' },
+      days: Array.from({length:7}, ()=> ({ items:[ emptyItem() ] }))
+    };
+
+    function save(){
+      state.profile.student = document.getElementById('student').value ?? '';
+      state.profile.group = document.getElementById('group').value ?? '';
+      state.profile.start = document.getElementById('start').value ?? '';
+      state.profile.reflection = document.getElementById('reflection').value ?? '';
+      state.profile.plan = document.getElementById('plan').value ?? '';
+      localStorage.setItem(KEY, JSON.stringify(state));
+    }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(KEY);
+        if(!raw) return;
+        const obj = JSON.parse(raw);
+        if(obj && Array.isArray(obj.days) && obj.days.length===7){
+          Object.assign(state, obj);
+        }
+      }catch(e){}
+    }
+
+    function buildTabs(){
+      const el = document.getElementById('dayTabs');
+      el.innerHTML = '';
+      for(let i=0;i<7;i++){
+        const b = document.createElement('div');
+        b.className = 'tab' + (i===state.activeDay ? ' active' : '');
+        b.textContent = dayName(i);
+        b.addEventListener('click', ()=>{
+          state.activeDay = i;
+          render();
+        });
+        el.appendChild(b);
+      }
+    }
+
+    function amountToBase(amount, unit){
+      const a = n(amount);
+      if(!Number.isFinite(a) || a<0) return NaN;
+      if(unit === 'g') return a;
+      if(unit === 'ml') return a;
+      if(unit === 'cl') return a * 10;
+      if(unit === 'l') return a * 1000;
+      return NaN;
+    }
+
+    function itemSugar(it){
+      const s100 = n(it.sugar100);
+      if(!Number.isFinite(s100) || s100<0) return NaN;
+      const base = amountToBase(it.amount, it.unit);
+      if(!Number.isFinite(base)) return NaN;
+      return (base * s100) / 100;
+    }
+
+    function dayTotals(day){
+      let sugar = 0;
+      let countItems = 0;
+      day.items.forEach(it=>{
+        const hasSomething = String(it.detail||'').trim() || String(it.amount||'').trim() || String(it.sugar100||'').trim();
+        if(hasSomething) countItems++;
+        const s = itemSugar(it);
+        if(Number.isFinite(s) && s>0) sugar += s;
+      });
+      return { sugar, countItems };
+    }
+
+    function renderProfile(){
+      document.getElementById('student').value = state.profile.student ?? '';
+      document.getElementById('group').value = state.profile.group ?? '';
+      document.getElementById('start').value = state.profile.start ?? '';
+      document.getElementById('reflection').value = state.profile.reflection ?? '';
+      document.getElementById('plan').value = state.profile.plan ?? '';
+      document.getElementById('limitLabel').textContent = `${LIMIT_G} g`;
+    }
+
+    function typeOptionsHTML(selectedId){
+      return ULTRA_TYPES.map(t=>{
+        const sel = (t.id === selectedId) ? 'selected' : '';
+        return `<option value="${t.id}" ${sel}>${t.label}</option>`;
+      }).join('');
+    }
+    function unitOptionsHTML(selected){
+      const opts = [{v:'g',l:'g'},{v:'ml',l:'ml'},{v:'cl',l:'cl'},{v:'l',l:'l'}];
+      return opts.map(o=>{
+        const sel = (o.v === selected) ? 'selected' : '';
+        return `<option value="${o.v}" ${sel}>${o.l}</option>`;
+      }).join('');
+    }
+
+    function renderTable(){
+      const body = document.getElementById('logBody');
+      body.innerHTML = '';
+
+      const day = state.days[state.activeDay];
+      if(!day.items || !Array.isArray(day.items)) day.items = [ emptyItem() ];
+
+      day.items.forEach((it, idx)=>{
+        const tr = document.createElement('tr');
+        const sugar = itemSugar(it);
+        const sugarTxt = Number.isFinite(sugar) ? `${round1(sugar)}` : '';
+
+        tr.innerHTML = `
+          <td>
+            <select data-k="typeId" data-i="${idx}">
+              ${typeOptionsHTML(it.typeId || 'otro')}
+            </select>
+          </td>
+          <td>
+            <input data-k="detail" data-i="${idx}" placeholder="Ej.: CocaCola, Oreo, Donuts..." value="${escapeHtml(it.detail)}"
+              autocomplete="off" autocapitalize="sentences" />
+          </td>
+          <td class="num">
+            <input data-k="amount" data-i="${idx}" inputmode="decimal" placeholder="Cantidad" value="${escapeHtml(it.amount)}" />
+          </td>
+          <td class="unit">
+            <select data-k="unit" data-i="${idx}">
+              ${unitOptionsHTML(it.unit || 'g')}
+            </select>
+          </td>
+          <td class="num">
+            <input data-k="sugar100" data-i="${idx}" inputmode="decimal" placeholder="g/100" value="${escapeHtml(it.sugar100)}" />
+          </td>
+          <td class="num">
+            <input class="ghost" data-out="sugar" readonly value="${sugarTxt}" placeholder="auto" />
+          </td>
+          <td class="actionsCol">
+            <button class="small" type="button" data-del="${idx}">🗑</button>
+          </td>
+        `;
+        body.appendChild(tr);
+      });
+
+      body.querySelectorAll('input[data-k], select[data-k]').forEach(el=>{
+        const k = el.dataset.k;
+
+        if(el.tagName === 'SELECT' && k === 'typeId'){
+          el.addEventListener('change', (e)=>{
+            const i = Number(e.target.dataset.i);
+            const newId = e.target.value;
+            state.days[state.activeDay].items[i].typeId = newId;
+
+            const suggested = ULTRA_TYPES.find(t=>t.id===newId)?.unit || 'g';
+            const unitSel = body.querySelector(`select[data-k="unit"][data-i="${i}"]`);
+            if(unitSel){
+              unitSel.value = suggested;
+              state.days[state.activeDay].items[i].unit = suggested;
+            }
+
+            const row = e.target.closest('tr');
+            const out = row.querySelector('input[data-out="sugar"]');
+            const s = itemSugar(state.days[state.activeDay].items[i]);
+            out.value = Number.isFinite(s) ? `${round1(s)}` : '';
+
+            save();
+            renderSummaryAndCharts();
+          });
+          return;
+        }
+
+        el.addEventListener('input', (e)=>{
+          const i = Number(e.target.dataset.i);
+          const kk = e.target.dataset.k;
+          state.days[state.activeDay].items[i][kk] = e.target.value;
+
+          const row = e.target.closest('tr');
+          const out = row.querySelector('input[data-out="sugar"]');
+          const s = itemSugar(state.days[state.activeDay].items[i]);
+          out.value = Number.isFinite(s) ? `${round1(s)}` : '';
+
+          save();
+          renderSummaryAndCharts();
+        });
+
+        if(el.tagName === 'SELECT' && k === 'unit'){
+          el.addEventListener('change', (e)=>{
+            const i = Number(e.target.dataset.i);
+            state.days[state.activeDay].items[i].unit = e.target.value;
+
+            const row = e.target.closest('tr');
+            const out = row.querySelector('input[data-out="sugar"]');
+            const s = itemSugar(state.days[state.activeDay].items[i]);
+            out.value = Number.isFinite(s) ? `${round1(s)}` : '';
+
+            save();
+            renderSummaryAndCharts();
+          });
+        }
+      });
+
+      body.querySelectorAll('button[data-del]').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const i = Number(btn.dataset.del);
+          const arr = state.days[state.activeDay].items;
+          arr.splice(i,1);
+          if(arr.length===0) arr.push(emptyItem());
+          save();
+          render();
+        });
+      });
+
+      const addTr = document.createElement('tr');
+      addTr.innerHTML = `
+        <td colspan="7">
+          <button type="button" class="small primary" onclick="addRow()">+ Añadir producto</button>
+          <span class="tiny" style="margin-left:8px">
+            En bebidas suele ser <strong>g/100ml</strong> y en sólidos <strong>g/100g</strong>.
+            Si pones <strong>cl</strong> o <strong>l</strong>, se convierte a ml automáticamente.
+          </span>
+        </td>
+      `;
+      body.appendChild(addTr);
+    }
+
+    function dayStatusTag(daySugar){
+      const limit = LIMIT_G;
+      if(daySugar <= limit) return {label:'VERDE (cumplo límite)', cls:'good'};
+      if(daySugar <= limit*1.25) return {label:'ÁMBAR (me paso poco)', cls:'warn'};
+      return {label:'ROJO (me paso mucho)', cls:'bad'};
+    }
+
+    function renderSummaryAndCharts(){
+      const day = state.days[state.activeDay];
+      const { sugar, countItems } = dayTotals(day);
+
+      document.getElementById('dayLabel').textContent = String(state.activeDay+1);
+      document.getElementById('daySugar').textContent = `${round1(sugar)} g`;
+      document.getElementById('dayUp').textContent = `${countItems}`;
+
+      const tag = dayStatusTag(sugar);
+      const tagEl = document.getElementById('dayTag');
+      tagEl.className = `tag ${tag.cls}`;
+      tagEl.textContent = tag.label;
+
+      let totalSugar = 0;
+      let greens=0, ambers=0, reds=0;
+      for(let i=0;i<7;i++){
+        const t = dayTotals(state.days[i]).sugar;
+        totalSugar += t;
+        const st = dayStatusTag(t).cls;
+        if(st==='good') greens++;
+        else if(st==='warn') ambers++;
+        else reds++;
+      }
+      const avg = totalSugar/7;
+
+      document.getElementById('weekSugar').textContent = `${round1(totalSugar)} g`;
+      document.getElementById('avgSugar').textContent = `${round1(avg)} g`;
+      document.getElementById('greenDays').textContent = String(greens);
+      document.getElementById('amberDays').textContent = String(ambers);
+      document.getElementById('redDays').textContent = String(reds);
+
+      drawDailyChart(LIMIT_G);
+      drawCompareChart(LIMIT_G, avg);
+    }
+
+    function fitCanvasToCSS(canvas, minH=260){
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const w = Math.max(320, Math.floor(rect.width * dpr));
+      const ratio = Number(canvas.dataset.ratio || 0);
+      const h = ratio ? Math.floor(rect.width * ratio * dpr) : Math.floor(rect.height * dpr);
+      const finalH = Math.max(minH*dpr, h || minH*dpr);
+      if(canvas.width !== w || canvas.height !== finalH){
+        canvas.width = w; canvas.height = finalH;
+      }
+    }
+    function roundRect(ctx, x, y, w, h, r, fill, stroke){
+      r = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.arcTo(x+w, y, x+w, y+h, r);
+      ctx.arcTo(x+w, y+h, x, y+h, r);
+      ctx.arcTo(x, y+h, x, y, r);
+      ctx.arcTo(x, y, x+w, y, r);
+      ctx.closePath();
+      if(fill) ctx.fill();
+      if(stroke) ctx.stroke();
+    }
+    function drawDailyChart(limit){
+      const c = document.getElementById('chartDaily');
+      c.dataset.ratio = (420/920).toString();
+      fitCanvasToCSS(c, 280);
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0,0,c.width,c.height);
+
+      const dpr = window.devicePixelRatio || 1;
+      const pad = 34*dpr, padB = 46*dpr, padT = 18*dpr, padR = 16*dpr;
+      const W = c.width, H = c.height;
+      const plotW = W - pad - padR;
+      const plotH = H - padT - padB;
+
+      const vals = state.days.map(d => dayTotals(d).sugar);
+      const maxVal = Math.max(10, ...vals, limit) * 1.15;
+
+      const ticks = 5;
+      ctx.font = `${12*dpr}px ui-sans-serif, system-ui`;
+      ctx.fillStyle = 'rgba(238,242,255,0.88)';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      for(let t=0;t<=ticks;t++){
+        const y = padT + (plotH * t / ticks);
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(W-padR, y);
+        ctx.strokeStyle = 'rgba(238,242,255,0.10)';
+        ctx.lineWidth = 1*dpr;
+        ctx.stroke();
+        const v = maxVal * (1 - t/ticks);
+        ctx.fillText(`${round1(v)} g`, pad-8*dpr, y);
+      }
+
+      const barW = plotW / (7*1.35);
+      const gap = barW*0.35;
+      const startX = pad + gap;
+
+      for(let i=0;i<7;i++){
+        const x = startX + i*(barW+gap);
+        const v = vals[i];
+        const h = plotH * (v/maxVal);
+        const y = padT + (plotH - h);
+
+        let fill = 'rgba(122,162,255,0.45)';
+        if(v <= limit) fill = 'rgba(57,217,138,0.55)';
+        else if(v <= limit*1.25) fill = 'rgba(255,206,92,0.55)';
+        else fill = 'rgba(255,107,122,0.55)';
+
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = 'rgba(238,242,255,0.20)';
+        ctx.lineWidth = 1*dpr;
+        roundRect(ctx, x, y, barW, h, 8*dpr, true, true);
+
+        ctx.fillStyle = 'rgba(238,242,255,0.88)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'top';
+        ctx.fillText(`D${i+1}`, x+barW/2, padT+plotH+10*dpr);
+
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(`${round1(v)}`, x+barW/2, y-6*dpr);
+      }
+
+      const yL = padT + (plotH - plotH*(limit/maxVal));
+      ctx.beginPath();
+      ctx.moveTo(pad, yL);
+      ctx.lineTo(W-padR, yL);
+      ctx.strokeStyle = 'rgba(238,242,255,0.60)';
+      ctx.setLineDash([6*dpr, 6*dpr]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = 'rgba(238,242,255,0.96)';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(`Límite: ${limit} g`, pad+6*dpr, yL-6*dpr);
+    }
+
+    function drawWrappedText(ctx, text, x, y, maxWidth, lineHeight){
+      const words = String(text).split(' ');
+      let line = '';
+      let yy = y;
+      for(let i=0;i<words.length;i++){
+        const testLine = line ? (line + ' ' + words[i]) : words[i];
+        const w = ctx.measureText(testLine).width;
+        if(w > maxWidth && line){
+          ctx.fillText(line, x, yy);
+          line = words[i];
+          yy += lineHeight;
+        }else{
+          line = testLine;
+        }
+      }
+      if(line) ctx.fillText(line, x, yy);
+      return yy;
+    }
+
+    function drawCompareChart(limit, avg){
+      const msgEl = document.getElementById('compareMsg');
+      const diff = avg - limit;
+      const pct = (diff/limit)*100;
+
+      if(avg <= limit) msgEl.textContent = `Bien: estás por debajo del límite (${round1(-diff)} g menos al día).`;
+      else msgEl.textContent = `Atención: superas el límite en ${round1(diff)} g al día (${round1(pct)}%).`;
+
+      const c = document.getElementById('chartCompare');
+      c.dataset.ratio = (380/920).toString();
+      fitCanvasToCSS(c, 300);
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0,0,c.width,c.height);
+
+      const dpr = window.devicePixelRatio || 1;
+      const pad = 28*dpr, padB = 70*dpr, padT = 18*dpr, padR = 18*dpr;
+      const W = c.width, H = c.height;
+      const plotW = W - pad - padR;
+      const plotH = H - padT - padB;
+
+      const maxVal = Math.max(10, limit, avg) * 1.25;
+
+      for(let i=0;i<5;i++){
+        const y = padT + (plotH*i/5);
+        ctx.beginPath();
+        ctx.moveTo(pad, y);
+        ctx.lineTo(W-padR, y);
+        ctx.strokeStyle = 'rgba(238,242,255,0.08)';
+        ctx.lineWidth = 1*dpr;
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(pad, padT+plotH);
+      ctx.lineTo(W-padR, padT+plotH);
+      ctx.strokeStyle = 'rgba(238,242,255,0.18)';
+      ctx.lineWidth = 1*dpr;
+      ctx.stroke();
+
+      const barW = plotW / 3.2;
+      const gap = barW*0.55;
+      const x1 = pad + gap;
+      const x2 = x1 + barW + gap;
+
+      function drawBar(x, v, label, fill){
+        const h = plotH*(v/maxVal);
+        const y = padT + (plotH - h);
+
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = 'rgba(238,242,255,0.22)';
+        ctx.lineWidth = 1*dpr;
+        roundRect(ctx, x, y, barW, h, 12*dpr, true, true);
+
+        ctx.fillStyle = 'rgba(238,242,255,0.96)';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.font = `${13*dpr}px ui-sans-serif, system-ui`;
+        ctx.fillText(`${round1(v)} g`, x+barW/2, y-7*dpr);
+
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = 'rgba(238,242,255,0.88)';
+        ctx.font = `${12*dpr}px ui-sans-serif, system-ui`;
+        const maxW = barW + 24*dpr;
+        drawWrappedText(ctx, label, x+barW/2, padT+plotH+12*dpr, maxW, 14*dpr);
+      }
+
+      drawBar(x1, limit, 'Límite saludable', 'rgba(57,217,138,0.60)');
+
+      let realFill = 'rgba(122,162,255,0.60)';
+      if(avg <= limit) realFill = 'rgba(57,217,138,0.60)';
+      else if(avg <= limit*1.25) realFill = 'rgba(255,206,92,0.60)';
+      else realFill = 'rgba(255,107,122,0.60)';
+
+      drawBar(x2, avg, 'Lo que hago (media diaria)', realFill);
+    }
+
+    function addRow(){
+      state.days[state.activeDay].items.push(emptyItem());
+      save();
+      render();
+    }
+
+    function clearWeek(){
+      if(!confirm('¿Borrar SOLO la semana (productos)?')) return;
+      state.days = Array.from({length:7}, ()=> ({ items:[ emptyItem() ] }));
+      save();
+      render();
+    }
+
+    function resetAll(){
+      if(!confirm('¿Reset TOTAL? Se borrará perfil, registros y reflexión.')) return;
+      localStorage.removeItem(KEY);
+      location.reload();
+    }
+
+    function exportCSV(){
+      const lines = [];
+      lines.push(['dia','tipo','producto','cantidad','unidad','azucar_100','azucar_ingerida_g'].join(','));
+      for(let d=0; d<7; d++){
+        state.days[d].items.forEach(it=>{
+          const sugar = itemSugar(it);
+          const typeLabel = (ULTRA_TYPES.find(t=>t.id===it.typeId)?.label) || it.typeId || '';
+          const row = [
+            d+1,
+            csvSafe(typeLabel),
+            csvSafe(it.detail),
+            csvSafe(it.amount),
+            csvSafe(it.unit),
+            csvSafe(it.sugar100),
+            Number.isFinite(sugar) ? round1(sugar) : ''
+          ];
+          lines.push(row.join(','));
+        });
+      }
+      const blob = new Blob([lines.join('\n')], {type:'text/csv;charset=utf-8'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'diario_ultraprocesados_azucar.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function csvSafe(x){
+      const s = String(x ?? '');
+      const needs = /[",\n]/.test(s);
+      if(needs) return `"${s.replace(/"/g,'""')}"`;
+      return s;
+    }
+
+    function bindProfile(){
+      ['student','group','start','reflection','plan'].forEach(id=>{
+        document.getElementById(id).addEventListener('input', ()=>{
+          save();
+          renderSummaryAndCharts();
+        });
+        document.getElementById(id).addEventListener('change', ()=>{
+          save();
+          renderSummaryAndCharts();
+        });
+      });
+    }
+
+    function render(){
+      buildTabs();
+      renderProfile();
+      renderTable();
+      renderSummaryAndCharts();
+    }
+
+    load();
+    window.addEventListener('DOMContentLoaded', ()=>{
+      bindProfile();
+      render();
+    });
+    window.addEventListener('resize', ()=>{
+      renderSummaryAndCharts();
+    });
+  </script>
+</body>
+</html>
